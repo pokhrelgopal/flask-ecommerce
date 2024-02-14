@@ -50,20 +50,20 @@ def register():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        existing_user = User.query.filter(
+        eu = existing_user = User.query.filter(
             (User.username == username) | (User.email == email)
         ).first()
-        if existing_user:
+        if not eu:
+            new_user = User(username=username, email=email)
+            new_user.password = password
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash("User created successfully!", "success")
+            return redirect(url_for("login"))
+        else:
             error = "Username or email already exists"
             return render_template("register.html", error=error)
-
-        new_user = User(username=username, email=email)
-        new_user.password = password
-        db.session.add(new_user)
-        db.session.commit()
-
-        return redirect(url_for("login"))
-
     return render_template("register.html")
 
 
@@ -86,10 +86,6 @@ def index():
 
             if image_file and allowed_file(image_file.filename):
                 filename = secure_filename(image_file.filename)
-                print(
-                    "Saving image to:",
-                    os.path.join(app.config["UPLOAD_FOLDER"], filename),
-                )
                 image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
                 image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             else:

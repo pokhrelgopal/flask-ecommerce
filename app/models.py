@@ -32,4 +32,4 @@ class Todo(db.Model):
     image = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
-        return "<Todo %r>" % self.title
+        return f"Todo {self.title}"
