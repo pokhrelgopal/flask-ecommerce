@@ -1,0 +1,34 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px; min-height: 100vh; height: 100%">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li>
+            <a href="{{ url_for('admin') }}"
+                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin') %}active text-white{% else %}text-white{% endif %}">
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_orders') }}"
+                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_orders') %}active text-white{% else %}text-white{% endif %}">
+                <span>Orders</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_products') }}"
+                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_products') %}active text-white{% else %}text-white{% endif %}">
+                <span>Products</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('admin_customers') }}"
+                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_customers') %}active text-white{% else %}text-white{% endif %}">
+                <span>Customers</span>
+            </a>
+        </li>
+        <li class="mt-5">
+            <a href="{{ url_for('logout') }}" class="nav-link text-danger d-flex align-items-center gap-2">
+                <span>Logout</span>
+                <span class="material-symbols-outlined"> logout </span>
+            </a>
+        </li>
+    </ul>
+</div>
