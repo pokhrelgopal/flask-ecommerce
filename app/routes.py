@@ -27,6 +27,9 @@ def is_admin():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
+    if is_authenticated():
+        return redirect(url_for("index"))
+
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
@@ -40,6 +43,8 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if is_authenticated():
+        return redirect(url_for("index"))
     if request.method == "POST":
         full_name = request.form.get("full_name")
         email = request.form.get("email")
@@ -117,9 +122,9 @@ def logout():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    status = is_authenticated()
-    if not status:
-        flash("Please login to continue.", "warning")
+    admin = is_admin()
+    if not admin:
+        flash("You are not authorized to access admin page.", "warning")
         return redirect(url_for("login"))
     return render_template("admin/dashboard.html")
 
