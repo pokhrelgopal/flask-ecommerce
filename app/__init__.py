@@ -1,13 +1,12 @@
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-import os
 from flask_migrate import Migrate
 from flask import session
+import os
 
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 MEDIA_FOLDER = os.path.join(os.getcwd(), "media")
 MEDIA = os.path.join("media", "uploads")
-
 
 app = Flask(__name__)
 

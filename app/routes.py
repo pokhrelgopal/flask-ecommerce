@@ -86,10 +86,11 @@ def index():
 def products():
     status = is_authenticated()
     q = request.args.get("q")
+    page_num = request.args.get("page", 1, type=int)
     if q:
         products = Product.query.filter(Product.name.contains(q)).all()
         return render_template("products.html", status=status, products=products)
-    products = Product.query.all()
+    products = Product.query.paginate(page=page_num, per_page=6)
     return render_template("products.html", status=status, products=products)
 
 
