@@ -82,13 +82,26 @@ def index():
     return render_template("index.html", status=status)
 
 
+# @app.route("/products", methods=["GET", "POST"])
+# def products():
+#     status = is_authenticated()
+#     q = request.args.get("q")
+#     if q:
+#         products = Product.query.filter(Product.name.contains(q)).all()
+#         return render_template("products.html", status=status, products=products)
+#     products = Product.query.all()
+#     return render_template("products.html", status=status, products=products)
+
+
 @app.route("/products", methods=["GET", "POST"])
 def products():
     status = is_authenticated()
     q = request.args.get("q")
     page_num = request.args.get("page", 1, type=int)
     if q:
-        products = Product.query.filter(Product.name.contains(q)).all()
+        products = Product.query.filter(Product.name.contains(q)).paginate(
+            page=page_num, per_page=6
+        )
         return render_template("products.html", status=status, products=products)
     products = Product.query.paginate(page=page_num, per_page=6)
     return render_template("products.html", status=status, products=products)
