@@ -102,15 +102,6 @@ def cart():
     return render_template("cart.html", status=status)
 
 
-@app.route("/orders", methods=["GET", "POST"])
-def orders():
-    status = is_authenticated()
-    if not status:
-        flash("Please login to continue.", "warning")
-        return redirect(url_for("login"))
-    return render_template("orders.html", status=status)
-
-
 @app.route("/checkout/<int:product_id>", methods=["GET", "POST"])
 def checkout(product_id):
     status = is_authenticated()
@@ -161,9 +152,22 @@ def checkout(product_id):
         )
         headers = {"Authorization": "Key dbf107a9c72548468029bdf82a8335de"}
         response = requests.post(URL, data=payload, headers=headers)
-        print(response.text)
+        # ! NOTE :: Manage the response from the payment gateway
+
+        flash("Order placed successfully.", "success")
+        return redirect(url_for("orders"))
 
     return render_template("checkout.html", status=status, product=product)
+
+
+@app.route("/orders", methods=["GET", "POST"])
+def orders():
+    status = is_authenticated()
+    if not status:
+        flash("Please login to continue.", "warning")
+        return redirect(url_for("login"))
+    orders = OrderDetails.query.filter_by(user_id=session["user_id"]).all()
+    return render_template("orders.html", status=status, orders=orders)
 
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -172,7 +176,41 @@ def profile():
     if not status:
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
-    return render_template("profile.html", status=status)
+    profile = User.query.filter_by(id=session["user_id"]).first()
+
+    if request.method == "POST":
+        full_name = request.form.get("full_name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        if len(full_name) < 5:
+            flash("Proper full name is required.", "warning")
+            return redirect(url_for("profile"))
+        if len(email) < 6:
+            flash("Please enter a valid email.", "warning")
+            return redirect(url_for("profile"))
+        if not password and not confirm_password:
+            new_user = User.query.filter_by(id=session["user_id"]).first()
+            new_user.full_name = full_name
+            new_user.email = email
+            db.session.commit()
+            flash("Profile updated successfully.", "success")
+
+        if password or confirm_password:
+            if len(password) < 6:
+                flash("Password must be at least 6 characters long.", "warning")
+                return redirect(url_for("profile"))
+            if password != confirm_password:
+                flash("Passwords do not match.", "warning")
+                return redirect(url_for("profile"))
+            new_user = User.query.filter_by(id=session["user_id"]).first()
+            new_user.full_name = full_name
+            new_user.email = email
+            new_user.password = password
+            db.session.commit()
+            flash("Profile updated successfully.", "success")
+
+    return render_template("profile.html", status=status, profile=profile)
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -193,6 +231,9 @@ def admin():
 @app.route("/admin-products", methods=["GET", "POST"])
 def admin_products():
     status = is_authenticated()
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
     if not status:
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
@@ -240,8 +281,25 @@ def admin_products():
     return render_template("admin/products.html", products=products)
 
 
+@app.route("/admin-product/<int:product_id>", methods=["GET", "POST"])
+def admin_product_details(product_id):
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
+    if not is_authenticated():
+        flash("Please login to continue.", "warning")
+        return redirect(url_for("login"))
+
+    product = Product.query.filter_by(id=product_id).first()
+
+    return render_template("admin/product-details.html", product=product)
+
+
 @app.route("/delete-product/", methods=["GET", "POST"])
 def delete_product():
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
     status = is_authenticated()
     if not status:
         flash("Please login to continue.", "warning")
@@ -259,17 +317,45 @@ def delete_product():
 
 @app.route("/admin-orders", methods=["GET", "POST"])
 def admin_orders():
-    status = is_authenticated()
-    if not status:
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
+    if not is_authenticated():
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
-    return render_template("admin/orders.html")
+
+    orders = OrderDetails.query.all()
+
+    return render_template("admin/orders.html", orders=orders)
+
+
+@app.route("/admin-orders/<int:order_id>", methods=["GET", "POST"])
+def admin_order_details(order_id):
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
+    if not is_authenticated():
+        flash("Please login to continue.", "warning")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        order_status = request.form.get("order_status")
+        od = OrderDetails.query.filter_by(id=order_id).first()
+        od.status = order_status
+        db.session.commit()
+        flash("Order status updated successfully.", "success")
+        return redirect(url_for("admin_orders"))
+
+    order = OrderDetails.query.filter_by(id=order_id).first()
+    return render_template("admin/order-details.html", order=order)
 
 
 @app.route("/admin-customers", methods=["GET", "POST"])
 def admin_customers():
-    status = is_authenticated()
-    if not status:
+    if not is_admin():
+        flash("You are not authorized to access admin page.", "warning")
+        return redirect(url_for("login"))
+    if not is_authenticated():
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
     return render_template("admin/customers.html")

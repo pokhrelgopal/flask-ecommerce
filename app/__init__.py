@@ -34,6 +34,14 @@ def inject_logged_user():
     return dict(user=None)
 
 
+@app.context_processor
+def inject_order_count():
+    from app.models import OrderDetails
+
+    order_count = OrderDetails.query.filter_by(user_id=session.get("user_id")).count()
+    return dict(order_count=order_count)
+
+
 app.secret_key = "my_secret_key_123"
 app.config["UPLOAD_FOLDER"] = MEDIA
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:user@localhost/flask_ecommerce"

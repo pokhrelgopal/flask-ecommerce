@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %} {% block title %} GadgetHub {% endblock title
+%} {% block content %}
+{% include 'common/sidebar.html' %}
+
+<main class="container mx-auto my-3">
+    <form action="{{ url_for('admin_order_details', order_id=order.id) }}" class="w-50" method="post">
+        <div class="form-group">
+            <label class="my-2" for="floatingInput">Product Name</label>
+            <input type="text" name="product_name" class="form-control" id="floatingInput" disabled
+                value="{{order.product.name}}" />
+        </div>
+        <div class="form-group">
+            <label class="my-2" for="floatingInput">Price (Rs)</label>
+            <input type="text" name="product_name" class="form-control" id="floatingInput" disabled
+                value="{{order.product.price}}" />
+        </div>
+        <div class="form-group">
+            <label class="my-2" for="floatingInput">Payment Status</label>
+            <input type="text" name="product_name" class="form-control text-capitalize" id="floatingInput" disabled
+                value="{{order.billing.status}}" />
+        </div>
+        <div class="form-group">
+            <!-- Correct value is in {{order.status}} -->
+            <label class="my-2" for="floatingInput">Order Status</label>
+            <select name="order_status" class="form-control" id="">
+                <option {% if order.status=="placed" %}selected{% endif %} value="placed">Placed</option>
+                <option {% if order.status=="received" %}selected{% endif %} value="received">Received</option>
+                <option {% if order.status=="out for delivery" %}selected{% endif %} value="out for delivery">Out for
+                    Delivery</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-sm mt-3">Update Order Status</button>
+    </form>
+</main>
+{% endblock content %}

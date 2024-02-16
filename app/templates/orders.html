@@ -4,7 +4,39 @@ GadgetHub
 {% endblock title %}
 {% block content %}
 {% include 'common/header.html' %}
-Orders Page
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="container mx-auto mt-3 alert alert-{{category}}" role="alert">
+    {{message}}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="container mx-auto my-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Order Status</th>
+                <th scope="col">Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in orders %}
+            <tr>
+                <th scope="row">{{o.id}}</th>
+                <td class="text-capitalize">{{o.product.name}}</td>
+                <td class="text-capitalize">{{o.product.price}}</td>
+                <td class="text-capitalize">{{o.status}}</td>
+                <td class="text-capitalize">{{o.billing.status}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 
 {% endblock content %}
