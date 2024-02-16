@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from app import app, db
-from app.models import User, Product
-from functools import wraps
+from app.models import User, Product, Billing, OrderDetails
+import requests
 from werkzeug.utils import secure_filename
 import os
+import json
 
 UPLOAD_FOLDER = os.path.join("media", "uploads")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
@@ -108,6 +109,61 @@ def orders():
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
     return render_template("orders.html", status=status)
+
+
+@app.route("/checkout/<int:product_id>", methods=["GET", "POST"])
+def checkout(product_id):
+    status = is_authenticated()
+    if not status:
+        flash("Please login to continue.", "warning")
+        return redirect(url_for("login"))
+    product = Product.query.filter_by(id=product_id).first()
+
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        phone = request.form.get("phone")
+        address = request.form.get("address1")
+        address2 = request.form.get("address2")
+        city = request.form.get("city")
+        state = request.form.get("state")
+        amount = product.price
+
+        my_billing = Billing(
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            address=address,
+            address2=address2,
+            city=city,
+            state=state,
+            amount=amount,
+        )
+        db.session.add(my_billing)
+        db.session.commit()
+
+        my_order = OrderDetails(
+            product_id=product.id, billing_id=my_billing.id, user_id=session["user_id"]
+        )
+        db.session.add(my_order)
+        db.session.commit()
+
+        # ! Payment Gateway Integration
+        URL = "https://a.khalti.com/api/v2/epayment/initiate/"
+        payload = json.dumps(
+            {
+                "return_url": "http://localhost:5000",
+                "website_url": "http://localhost:5000",
+                "amount": amount,
+                "purchase_order_id": my_order.id,
+                "purchase_order_name": product.name,
+            }
+        )
+        headers = {"Authorization": "Key dbf107a9c72548468029bdf82a8335de"}
+        response = requests.post(URL, data=payload, headers=headers)
+        print(response.text)
+
+    return render_template("checkout.html", status=status, product=product)
 
 
 @app.route("/profile", methods=["GET", "POST"])

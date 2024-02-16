@@ -4,9 +4,18 @@ GadgetHub
 {% endblock title %}
 {% block content %}
 {% include 'common/header.html' %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="container mx-auto mt-3 alert alert-{{category}}" role="alert">
+    {{message}}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 <div class="container mx-auto">
     <div class="album py-2">
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end my-3">
             <form class="d-flex" role="search" action="{{url_for('products')}}">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
                 <button class="btn btn-outline-success" type="submit">Search</button>
@@ -26,9 +35,13 @@ GadgetHub
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                                    <!-- <button type="button" class="btn btn-sm btn-outline-secondary">
                                         View
-                                    </button>
+                                    </button> -->
+                                    <a href="{{ url_for('checkout', product_id=p.id) }}" type="button"
+                                        class="btn btn-sm btn-outline-secondary">
+                                        Buy Now
+                                    </a>
                                 </div>
                                 <small class="text-body-secondary">Rs. {{p.price}}</small>
                             </div>

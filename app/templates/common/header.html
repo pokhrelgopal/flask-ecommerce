@@ -9,8 +9,8 @@
                 <li><a href="{{ url_for('index') }}" class="nav-link px-2 text-white">Home</a></li>
                 <li><a href="{{ url_for('products') }}" class="nav-link px-2 text-white">Products</a></li>
                 {% if is_authenticated %}
-                <li><a href="{{ url_for('cart') }}" class="nav-link px-2 text-white">Cart</a></li>
-                <li><a href="{{ url_for('orders') }}" class="nav-link px-2 text-white">Orders</a></li>
+                <!-- <li><a href="{{ url_for('cart') }}" class="nav-link px-2 text-white">Cart</a></li> -->
+                <li><a href="{{ url_for('orders') }}" class="nav-link px-2 text-white">Orders (0)</a></li>
                 <li><a href="{{ url_for('logout') }}" class="nav-link px-2 text-danger">Logout</a></li>
                 {% endif %}
 
