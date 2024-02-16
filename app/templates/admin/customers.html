@@ -1,7 +1,44 @@
 {% extends 'layouts/base.html' %} {% block title %} GadgetHub {% endblock title
 %} {% block content %}
 {% include 'common/sidebar.html' %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="container mx-auto mt-3 alert alert-{{category}}" role="alert">
+    {{message}}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 <main class="container mx-auto my-3">
-    Customers
+    <div class="container mx-auto my-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in customers %}
+                <tr>
+                    <th scope="row">{{o.id}}</th>
+                    <td class="text-capitalize">{{o.full_name}}</td>
+                    <td class="text-capitalize">{{o.email}}</td>
+                    <td class="text-capitalize">
+                        <form action="" method="post">
+                            <input type="hidden" name="user_id" value="{{o.id}}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </main>
 {% endblock content %}

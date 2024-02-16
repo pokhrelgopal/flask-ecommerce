@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from app import app, db
+from flask import render_template, request, redirect, url_for, session, flash
 from app.models import User, Product, Billing, OrderDetails
-import requests
 from werkzeug.utils import secure_filename
-import os
+from app import app, db
+import requests
 import json
+import os
 
 UPLOAD_FOLDER = os.path.join("media", "uploads")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
@@ -292,6 +292,49 @@ def admin_product_details(product_id):
 
     product = Product.query.filter_by(id=product_id).first()
 
+    if request.method == "POST":
+        product.name = request.form.get("product_name")
+        product.price = request.form.get("product_price")
+        product.description = request.form.get("product_description")
+        image_file = request.files["product_image"]
+
+        if not product.name:
+            flash("Product name is required.", "warning")
+            return redirect(url_for("admin_product_details", product_id=product_id))
+
+        if not product.price:
+            flash("Product price is required.", "warning")
+            return redirect(url_for("admin_product_details", product_id=product_id))
+
+        if not product.description:
+            flash("Product description is required.", "warning")
+            return redirect(url_for("admin_product_details", product_id=product_id))
+
+        if not image_file:
+
+            product.name = product.name
+            product.price = product.price
+            product.description = product.description
+            db.session.commit()
+            flash("Product updated successfully.", "success")
+            return redirect(url_for("admin_products"))
+
+        if image_file and allowed_file(image_file.filename):
+            filename = secure_filename(image_file.filename)
+            image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            product.image = image_path
+            product.name = product.name
+            product.price = product.price
+            product.description = product.description
+            db.session.commit()
+            flash("Product updated successfully.", "success")
+            return redirect(url_for("admin_products"))
+
+        else:
+            flash("Invalid file format for image.", "warning")
+            return redirect(url_for("admin_product_details", product_id=product_id))
+
     return render_template("admin/product-details.html", product=product)
 
 
@@ -358,4 +401,14 @@ def admin_customers():
     if not is_authenticated():
         flash("Please login to continue.", "warning")
         return redirect(url_for("login"))
-    return render_template("admin/customers.html")
+    customers = User.query.filter_by(role="user").all()
+
+    if request.method == "POST":
+        user_id = request.form.get("user_id")
+        user = User.query.filter_by(id=user_id).first()
+        db.session.delete(user)
+        db.session.commit()
+        flash("Customer deleted successfully.", "success")
+        return redirect(url_for("admin_customers"))
+
+    return render_template("admin/customers.html", customers=customers)
