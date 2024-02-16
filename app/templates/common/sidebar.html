@@ -1,34 +1,28 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px; min-height: 100vh; height: 100%">
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li>
-            <a href="{{ url_for('admin') }}"
-                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin') %}active text-white{% else %}text-white{% endif %}">
-                <span>Dashboard</span>
+<header class="p-3 text-bg-dark">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <!-- <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                GadgetHub
+            </a> -->
+
+            <ul class=" nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="{{ url_for('admin') }}" class="nav-link px-2 text-white">Dashboard</a></li>
+                <li><a href="{{ url_for('admin_products') }}" class="nav-link px-2 text-white">Products</a></li>
+                <li><a href="{{ url_for('admin_orders') }}" class="nav-link px-2 text-white">Orders</a></li>
+                <li><a href="{{ url_for('admin_customers') }}" class="nav-link px-2 text-white">Customers</a></li>
+                <li><a href="{{ url_for('logout') }}" class="nav-link px-2 text-danger">Logout</a></li>
+
+
+            </ul>
+
+
+            <a href="{{url_for('profile')}}" class="nav-link d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined">
+                    account_circle
+                </span>
+                <span>{{user.full_name}}</span>
             </a>
-        </li>
-        <li>
-            <a href="{{ url_for('admin_orders') }}"
-                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_orders') %}active text-white{% else %}text-white{% endif %}">
-                <span>Orders</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('admin_products') }}"
-                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_products') %}active text-white{% else %}text-white{% endif %}">
-                <span>Products</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('admin_customers') }}"
-                class="d-flex align-items-center gap-2 nav-link {% if request.path == url_for('admin_customers') %}active text-white{% else %}text-white{% endif %}">
-                <span>Customers</span>
-            </a>
-        </li>
-        <li class="mt-5">
-            <a href="{{ url_for('logout') }}" class="nav-link text-danger d-flex align-items-center gap-2">
-                <span>Logout</span>
-                <span class="material-symbols-outlined"> logout </span>
-            </a>
-        </li>
-    </ul>
-</div>
+
+        </div>
+    </div>
+</header>

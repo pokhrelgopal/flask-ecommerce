@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %} {% block title %} GadgetHub {% endblock title
 %} {% block content %}
-<div class="d-flex gap-5">
-    <aside> {% include 'common/sidebar.html' %}</aside>
+{% include 'common/sidebar.html' %}
+<main class="container mx-auto my-3">
     Orders
-</div>
+</main>
 {% endblock content %}

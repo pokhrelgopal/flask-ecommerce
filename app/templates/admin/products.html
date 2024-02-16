@@ -1,126 +1,90 @@
-{% extends 'layouts/base.html' %} {% block title %} GadgetHub {% endblock title
-%} {% block content %}
-<div class="d-flex gap-5">
-    <aside>{% include 'common/sidebar.html' %}</aside>
-    <div class="album py-2">
-        <div class="container mx-auto d-flex justify-content-end">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary mt-2 mb-4" data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
-                Add New Product
-            </button>
+{% extends 'layouts/base.html' %} {% block title %} GadgetHub
+{% endblock title%}
+{% block content %}
+{% include 'common/sidebar.html' %}
 
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <form action="" method="post">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                                    Add Product
-                                </h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label class="my-2" for="floatingInput">Product Name</label>
-                                    <input type="text" name="product_name" class="form-control" id="floatingInput" />
-                                </div>
-                                <div class="form-group">
-                                    <label class="my-2" for="floatingInput">Price</label>
-                                    <input type="number" min="0" name="product_price" class="form-control"
-                                        id="floatingInput" />
-                                </div>
-                                <div class="form-group">
-                                    <label class="my-2" for="floatingInput">Image</label>
-                                    <input type="file" name="product_image" class="form-control" id="floatingInput" />
-                                </div>
-                                <div class="form-group">
-                                    <label class="my-2" for="floatingInput">Description</label>
-                                    <textarea class="form-control" placeholder="Product Description"
-                                        id="floatingTextarea2" style="height: 100px"></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Close
-                                </button>
-                                <button type="button" class="btn btn-primary">
-                                    Save changes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="https://picsum.photos/300/200" alt="" />
-                        <div class="card-body">
-                            <p class="card-text">
-                                This is a wider card with supporting text below as a natural
-                                lead-in to additional content. This content is a little bit
-                                longer.
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </div>
-                                <small class="text-body-secondary">9 mins</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="https://picsum.photos/300/200" alt="" />
-                        <div class="card-body">
-                            <p class="card-text">
-                                This is a wider card with supporting text below as a natural
-                                lead-in to additional content. This content is a little bit
-                                longer.
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </div>
-                                <small class="text-body-secondary">9 mins</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="https://picsum.photos/300/200" alt="" />
-                        <div class="card-body">
-                            <p class="card-text">
-                                This is a wider card with supporting text below as a natural
-                                lead-in to additional content. This content is a little bit
-                                longer.
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </div>
-                                <small class="text-body-secondary">9 mins</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="container mx-auto d-flex justify-content-end mt-2">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary mt-2 mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add New Product
+    </button>
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form action="{{ url_for('admin_products') }}" method="post" enctype="multipart/form-data">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                            Add Product
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="my-2" for="floatingInput">Product Name</label>
+                            <input type="text" name="product_name" class="form-control" id="floatingInput" />
+                        </div>
+                        <div class="form-group">
+                            <label class="my-2" for="floatingInput">Price</label>
+                            <input type="number" min="0" name="product_price" class="form-control" id="floatingInput" />
+                        </div>
+                        <div class="form-group">
+                            <label class="my-2" for="floatingInput">Image</label>
+                            <input type="file" name="product_image" class="form-control" id="floatingInput" />
+                        </div>
+                        <div class="form-group">
+                            <label class="my-2" for="floatingInput">Description</label>
+                            <textarea class="form-control" placeholder="Product Description" id="floatingTextarea2"
+                                style="height: 100px" name="product_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </div>
             </div>
+        </form>
+    </div>
+</div>
+<div class="album py-2">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for p in products %}
+            <div class="col">
+                <div class="card shadow-sm " style=" min-width: 300px;">
+                    <img src="{{p.image}}" alt="" class="thumbnail-img card-img-top object-fit-cover p-2"
+                        style="width: auto; height: 300px">
+                    <div class="card-body">
+                        <h5>{{p.name}}</h5>
+                        <p class="card-text text-sm">
+                            {{p.description}}
+                        </p>
+                        <form action="{{url_for('delete_product')}}" method="post">
+                            <input type="hidden" name="product_id" value="{{p.id}}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                                        Edit
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        Delete
+                                    </button>
+                                </div>
+                                <small class="text-body-secondary">9 mins</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
+
 {% endblock content %}
