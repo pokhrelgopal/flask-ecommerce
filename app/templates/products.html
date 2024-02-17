@@ -17,7 +17,8 @@ GadgetHub
     <div class="album py-2">
         <div class="d-flex justify-content-end my-3">
             <form class="d-flex" role="search" action="{{url_for('products')}}">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q"
+                    value="{{q}}">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
@@ -50,13 +51,16 @@ GadgetHub
             </div>
         </div>
         <div class="my-5 container mx-auto d-flex justify-content-between align-items-center">{% if products.has_prev %}
-            <a class="btn btn-outline-secondary btn-sm"
-                href="{{ url_for('products', page=products.prev_num) }}">Previous</a>
+            <div class="d-flex justify-content-start"><a class="btn btn-outline-secondary btn-sm"
+                    href="{{ url_for('products', q=q, page=products.prev_num) }}">Previous</a></div>
             {% endif %}
 
+
+
             {% if products.has_next %}
-            <a class="btn btn-outline-secondary btn-sm"
-                href="{{ url_for('products', page=products.next_num) }}">Next</a>
+            <div class="d-flex justify-content-end"><a class="btn btn-outline-secondary btn-sm"
+                    href="{{ url_for('products', q=q, page=products.next_num) }}">Next</a></div>
+
             {% endif %}
         </div>
     </div>

@@ -30,7 +30,9 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    orders = db.relationship("OrderDetails", backref="product", lazy=True)
+    orders = db.relationship(
+        "OrderDetails", backref="product", lazy=True, cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return "<Product %r>" % self.name
@@ -47,7 +49,9 @@ class Billing(db.Model):
     state = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), nullable=False, default="pending")
-    orders = db.relationship("OrderDetails", backref="billing", lazy=True)
+    orders = db.relationship(
+        "OrderDetails", backref="billing", lazy=True, cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return "<Billing %r>" % self.id
