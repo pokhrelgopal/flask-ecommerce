@@ -146,23 +146,44 @@ def checkout(product_id):
 
         # ! Payment Gateway Integration
         URL = "https://a.khalti.com/api/v2/epayment/initiate/"
-        payload = json.dumps(
-            {
-                "return_url": "http://localhost:5000",
-                "website_url": "http://localhost:5000",
-                "amount": amount,
-                "purchase_order_id": my_order.id,
-                "purchase_order_name": product.name,
-            }
-        )
-        headers = {"Authorization": "Key dbf107a9c72548468029bdf82a8335de"}
-        response = requests.post(URL, data=payload, headers=headers)
-        # ! NOTE :: Manage the response from the payment gateway
+        payload = {
+            "return_url": "http://localhost:5000/payment-success",
+            "website_url": "http://localhost:5000",
+            "amount": int(amount),
+            "purchase_order_id": my_order.id,
+            "purchase_order_name": product.name,
+        }
 
-        flash("Order placed successfully.", "success")
-        return redirect(url_for("orders"))
+        headers = {"Authorization": "Key 8eb5e556328c47f2a2a4a7c9b3511b32"}
+        try:
+            response = requests.post(URL, data=payload, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            return redirect(data["payment_url"])
+        except requests.RequestException as e:
+            print(f"Request to Khalti API failed: {e}")
 
     return render_template("checkout.html", status=status, product=product)
+
+
+@app.route("/payment-success", methods=["GET", "POST"])
+def payment_success():
+    status = is_authenticated()
+    if not status:
+        flash("Please login to continue.", "warning")
+        return redirect(url_for("login"))
+
+    status = request.args.get("status")
+    purchase_order_id = request.args.get("purchase_order_id")
+    od = OrderDetails.query.filter_by(id=purchase_order_id).first()
+    if status.lower() == "completed":
+        od.billing.status = "completed"
+        db.session.commit()
+    else:
+        od.billing.status = status.lower()
+        db.session.commit()
+
+    return render_template("payment-success.html", status=status)
 
 
 @app.route("/orders", methods=["GET", "POST"])
